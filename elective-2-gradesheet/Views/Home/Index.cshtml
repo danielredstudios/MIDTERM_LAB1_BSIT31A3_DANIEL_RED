@@ -1,141 +1,33 @@
-﻿@using elective_2_gradesheet.Data.Entities
-@model CsvDisplayViewModel
-
-
-@{
-    ViewData["Title"] = "CSV Importer";
-    var sections = ViewBag.Sections as IEnumerable<SelectListItem>;
+﻿@{
+    ViewData["Title"] = "Home Page";
 }
 
+<div class="text-center">
+    <h1 class="display-4">Welcome</h1>
+    <p>Upload a CSV file to process student grades.</p>
+</div>
+
 <div class="container mt-5">
-    <div class="text-end mb-4">
-        <a asp-action="Records" class="btn btn-info rounded-pill px-3 shadow-sm">
-            <i class="fas fa-list-alt me-2"></i> View All Saved Records
-        </a>
-    </div>
-
     <div class="row justify-content-center">
-        <div class="col-md-10">
-            <div class="card shadow-md mb-5 rounded-lg">
-                <div class="card-header text-white text-center py-2 rounded-top-lg" style="background-color: #36454F;">
-                    <h4 class="mb-0"><i class="fas fa-file-upload me-2"></i> Upload Gradebook CSV</h4>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    Upload CSV
                 </div>
-                <div class="card-body p-4">
-                    @if (TempData["ErrorMessage"] != null)
-                    {
-                        <div class="alert alert-danger alert-dismissible fade show rounded-md" role="alert">
-                            @TempData["ErrorMessage"]
-                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                <div class="card-body">
+                    <form asp-action="Upload" method="post" enctype="multipart/form-data">
+                        <div class="mb-3">
+                            <label for="file" class="form-label">Select CSV File</label>
+                            <input type="file" name="file" id="file" class="form-control" accept=".csv" />
                         </div>
-                    }
-
-                    <form asp-controller="Home" asp-action="Upload" method="post" enctype="multipart/form-data">
-                        <div class="row align-items-end">
-                            <div class="col-md-5">
-                                <div class="form-group mb-3">
-                                    <label for="fileUpload" class="form-label fw-semibold">Select CSV File:</label>
-                                    <input type="file" id="fileUpload" name="file" class="form-control rounded-md" accept=".csv" required />
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="form-group mb-3">
-                                    <label asp-for="SectionId" class="form-label fw-semibold">Select Section:</label>
-                                    <select id="sectionSelect" asp-for="SectionId" asp-items="sections" class="form-control rounded-md" required>
-                                        <option value="">-- Select Section --</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="form-group mb-3">
-                                    <label asp-for="GradingPeriod" class="form-label fw-semibold">Select Period:</label>
-                                    <select id="periodSelect" asp-for="GradingPeriod" asp-items="Html.GetEnumSelectList<GradingPeriod>()" class="form-control rounded-md" required></select>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="d-grid mt-3">
-                            <button type="submit" id="uploadButton" class="btn btn-primary btn-md rounded-pill shadow-sm" disabled>
-                                <i class="fas fa-save me-2"></i> Upload and Save Data
-                            </button>
-                        </div>
+                        <button type="submit" class="btn btn-primary" id="uploadButton">Upload</button>
                     </form>
                 </div>
             </div>
-
-            <!-- Display Data Section -->
-            @if (Model != null && Model.GradeRecords.Any())
-            {
-                <div class="card shadow-md mt-5 rounded-lg">
-                    <div class="card-header text-white text-center py-2 rounded-top-lg" style="background-color: #4CAF50;">
-                        <h4 class="mb-0"><i class="fas fa-table me-2"></i> Processed Gradebook Data</h4>
-                    </div>
-                    <div class="card-body p-4">
-                        <div class="table-responsive">
-                            <table class="table table-striped table-bordered table-hover">
-                                <thead class="thead-dark">
-                                    <tr>
-                                        <th>Period</th>
-                                        <th>Last Name</th>
-                                        <th>First Name</th>
-                                        <th>Email</th>
-                                        <th>Activity Name</th>
-                                        <th>Status</th>
-                                        <th>Points</th>
-                                        <th>Max Points</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach (var item in Model.GradeRecords)
-                                    {
-                                        <tr>
-                                            <td><span class="badge bg-info text-dark rounded-pill">@Model.GradingPeriod.ToString()</span></td>
-                                            <td>@item.LastName</td>
-                                            <td>@item.FirstName</td>
-                                            <td>@item.Email</td>
-                                            <td>@item.ActivityName</td>
-                                            <td>@item.Status</td>
-                                            <td>@item.Points</td>
-                                            <td>@item.MaxPoints</td>
-                                        </tr>
-                                    }
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            }
         </div>
     </div>
 </div>
 
 @section Scripts {
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const fileInput = document.getElementById('fileUpload');
-            const sectionSelect = document.getElementById('sectionSelect');
-            const periodSelect = document.getElementById('periodSelect');
-            const uploadButton = document.getElementById('uploadButton');
-
-            function validateForm() {
-                const file = fileInput.files[0];
-                const isFileValid = file && file.name.toLowerCase().endsWith('.csv');
-                const isSectionSelected = sectionSelect.value !== '';
-                const isPeriodSelected = periodSelect.value !== '';
-
-                // Enable the button only if all conditions are met
-                if (isFileValid && isSectionSelected && isPeriodSelected) {
-                    uploadButton.disabled = false;
-                } else {
-                    uploadButton.disabled = true;
-                }
-            }
-
-            // Add event listeners to all relevant inputs
-            fileInput.addEventListener('change', validateForm);
-            sectionSelect.addEventListener('change', validateForm);
-            periodSelect.addEventListener('change', validateForm);
-
-            // Initial validation check on page load
-            validateForm();
-        });
-    </script>
+    <script src="~/js/views/index.js" asp-append-version="true"></script>
 }

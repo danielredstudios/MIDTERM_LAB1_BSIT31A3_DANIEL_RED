@@ -1,0 +1,34 @@
+﻿@model elective_2_gradesheet.Models.StudentProfileViewModel
+
+<div class="row mb-4">
+    <!-- Filter by Period Form -->
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Filter by Period</h5>
+                <form asp-action="StudentProfile" method="get">
+                    <input type="hidden" name="id" value="@Model.Student.Id" />
+                    <div class="input-group">
+                        <select name="period" class="form-select" asp-items="ViewBag.Periods"></select>
+                        <button class="btn btn-outline-primary" type="submit">Filter</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <!-- Bulk Add Activity Form -->
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Bulk Add Activity</h5>
+                <form asp-action="BulkAdd" method="post">
+                    <input type="hidden" name="studentId" value="@Model.Student.Id" />
+                    <div class="input-group">
+                        <select name="period" class="form-select" asp-items="ViewBag.Periods"></select>
+                        <button class="btn btn-outline-success" type="submit">Bulk Add</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

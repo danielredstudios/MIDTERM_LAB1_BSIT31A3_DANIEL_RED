@@ -26,7 +26,7 @@ namespace CsvImporter.Controllers
         public IActionResult Index(CsvDisplayViewModel model = null)
         {
             model ??= new CsvDisplayViewModel();
-            ViewBag.Sections = _context.Sections
+                ViewBag.Sections = _context.Sections
                 .Select(s => new SelectListItem { Text = s.Name, Value = s.Id.ToString() })
                 .ToList();
             return View(model);

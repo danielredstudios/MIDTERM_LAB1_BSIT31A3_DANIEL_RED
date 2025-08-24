@@ -6,14 +6,10 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
-
-builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-
-
 builder.Services.AddScoped<IGradeService, GradeService>();
-builder.Services.AddScoped<ICsvParsingService, CsvParsingService>(); 
+builder.Services.AddScoped<ICsvParsingService, CsvParsingService>();
 
 
 var app = builder.Build();
@@ -35,6 +31,7 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    // Changed the default action from "Index" to "Records"
+    pattern: "{controller=Home}/{action=Records}/{id?}");
 
 app.Run();
